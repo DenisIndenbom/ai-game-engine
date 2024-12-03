@@ -1,9 +1,8 @@
 import json
 
-from config import *
+from models import Session, db
 from . import run_engine, stop_engine
 from .exceptions import *
-from models import Session, db
 
 
 def __generate_description(session):
@@ -49,6 +48,7 @@ def create_session(game, teams, user):
 
     redis.set(f'session-{session.id}', session.description)
     run_engine(session)
+
     return session
 
 
@@ -113,10 +113,12 @@ def grab_sessions(user):
     sessions = list(set(sessions))
 
     sessions.sort(key=lambda s: s.created_on)
+
     return sessions
 
 
 def get_sessions(state=None):
     if not state:
         return Session.query.all()
+
     return Session.query.filter_by(state=state).all()

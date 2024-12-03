@@ -1,8 +1,9 @@
-import json
 from redis import Redis
 
-from config import REDIS_HOST, REDIS_PORT
-from methods import *
+from config import *
+from methods.sessions import *
+from methods.stats import update_session_stats
+from methods.teams import get_team_by_id
 
 redis = Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=True)
 

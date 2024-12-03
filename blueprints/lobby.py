@@ -1,5 +1,6 @@
 from flask import Blueprint
 from flask import render_template, redirect, request, abort
+
 from helpers import requires_auth
 from methods import *
 
@@ -8,7 +9,7 @@ lobby_blueprint = Blueprint('lobby', __name__)
 
 @lobby_blueprint.route('/')
 @requires_auth
-def active(user):
+def active(*_):
     return render_template('lobbies/index.html', lobbies=get_lobbies(), title='Активные лобби')
 
 
@@ -22,12 +23,12 @@ def index(user, lobby_id):
 
     team_added = description.get(str(user.id)) is not None
 
-    teams = [get_team_by_id(team_id)
-             for team_id in get_lobby_teams_ids(lobby_id)]
+    lobby_teams = [get_team_by_id(team_id)
+                   for team_id in get_lobby_teams_ids(lobby_id)]
 
     return render_template('lobbies/lobby.html',
                            lobby_id=lobby_id,
-                           teams=teams,
+                           teams=lobby_teams,
                            owner=is_lobby_owner(lobby_id, user.id),
                            team_added=team_added,
                            update=False)
@@ -35,7 +36,7 @@ def index(user, lobby_id):
 
 @lobby_blueprint.route('/create', methods=['GET'])
 @requires_auth
-def create_page(user):
+def create_page(*_):
     return render_template('lobbies/create.html', games=get_games())
 
 
@@ -46,7 +47,7 @@ def create(user):
 
     try:
         get_game_by_id(game_id)
-    except:
+    except NotFound:
         return render_template('lobbies/create.html', games=get_games(), error="Выберите игру")
 
     lobby_id = create_lobby(user.id, game_id)
@@ -57,9 +58,9 @@ def create(user):
 @lobby_blueprint.route('/<int:lobby_id>/update', methods=['GET'])
 @requires_auth
 def update_page(user, lobby_id):
-    teams = get_teams_by_owner(user.id)
+    user_teams = get_teams_by_owner(user.id)
 
-    return render_template('lobbies/lobby.html', lobby_id=lobby_id, update=True, teams=teams)
+    return render_template('lobbies/lobby.html', lobby_id=lobby_id, update=True, teams=user_teams)
 
 
 @lobby_blueprint.route('/<int:lobby_id>/update', methods=['POST'])
@@ -73,7 +74,8 @@ def update(user, lobby_id):
     except NotFound:
         return render_template('lobbies/lobby.html', lobby_id=lobby_id, update=True, error="Команда не найдена!")
     except IncorrectTeam:
-        return render_template('lobbies/lobby.html', lobby_id=lobby_id, update=True, error="Выберите корректную команду!")
+        return render_template('lobbies/lobby.html', lobby_id=lobby_id, update=True,
+                               error="Выберите корректную команду!")
 
     description = get_lobby_description(lobby_id)
     description[user.id] = team_id
@@ -88,14 +90,14 @@ def update(user, lobby_id):
 
 @lobby_blueprint.route('/<int:lobby_id>/delete/<int:id>', methods=['GET'])
 @requires_auth
-def delete_user(user, lobby_id, id):
+def delete_user(user, lobby_id, user_id):
     if not is_lobby_owner(lobby_id, user.id):
         return redirect(f'/{lobby_id}')
 
     description = get_lobby_description(lobby_id)
     try:
-        description.pop(str(id))
-    except:
+        description.pop(str(user_id))
+    except KeyError:
         return redirect(f'/lobby/{lobby_id}')
 
     set_lobby_description(lobby_id, description)
@@ -113,9 +115,9 @@ def start_session(user, lobby_id):
 
     try:
         selected_game = get_lobby(lobby_id).game
-        teams = [get_team_by_id(team_id) for team_id in teams_ids]
+        lobby_teams = [get_team_by_id(team_id) for team_id in teams_ids]
 
-        game_session = create_session(selected_game, teams)
+        game_session = create_session(selected_game, lobby_teams, user)
         run_engine(game_session)
 
         delete_lobby(lobby_id)

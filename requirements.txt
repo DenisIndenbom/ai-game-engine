@@ -1,4 +1,4 @@
-Flask
+Flask~=3.1.0
 Flask-SQLAlchemy
 psycopg2-binary
 flask_migrate
@@ -8,7 +8,11 @@ flask_socketio
 gevent-websocket
 eventlet
 gunicorn
-redis
-flask-cors
+redis~=5.2.0
+flask-cors~=5.0.0
 build
+SQLAlchemy~=2.0.36
+Flask-Migrate~=4.0.7
+alembic~=1.14.0
+Flask-SocketIO~=5.4.1
 git+https://github.com/roctbb/ai-game-engine#subdirectory=ge_sdk

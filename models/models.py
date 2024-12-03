@@ -57,13 +57,15 @@ class Session(db.Model):
     winner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     created_by = db.Column('created_by', db.Integer, db.ForeignKey('user.id'))
 
-    creator = db.relationship('User', backref=backref('created_sessions', uselist=False), lazy=True, foreign_keys=[created_by])
-    winner = db.relationship('User', backref=backref('winned_sessions', uselist=False), lazy=True, foreign_keys=[winner_id])
+    creator = db.relationship('User', backref=backref('created_sessions', uselist=False), lazy=True,
+                              foreign_keys=[created_by])
+    winner = db.relationship('User', backref=backref('winned_sessions', uselist=False), lazy=True,
+                             foreign_keys=[winner_id])
     teams = db.relationship('Team', secondary=team_session, backref='sessions')
+
 
 class Lobby(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete="CASCADE"))
     game_id = db.Column(db.Integer, db.ForeignKey('game.id', ondelete="CASCADE"))
     description = db.Column(db.JSON, nullable=True)
-    

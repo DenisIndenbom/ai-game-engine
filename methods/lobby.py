@@ -1,9 +1,9 @@
-from .exceptions import *
 from models import *
+from .exceptions import *
 
 
-def get_lobby(id):
-    lobby = Lobby.query.get(id)
+def get_lobby(lobby_id):
+    lobby = Lobby.query.get(lobby_id)
 
     if not lobby:
         raise NotFound
@@ -15,12 +15,12 @@ def get_lobbies():
     return Lobby.query.all()
 
 
-def get_lobby_description(id):
-    return get_lobby(id).description
+def get_lobby_description(lobby_id):
+    return get_lobby(lobby_id).description
 
 
-def set_lobby_description(id, description):
-    lobby = Lobby.query.get(id)
+def set_lobby_description(lobby_id, description):
+    lobby = Lobby.query.get(lobby_id)
 
     lobby.description = description
 

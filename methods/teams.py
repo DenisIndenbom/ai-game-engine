@@ -1,5 +1,5 @@
-from .exceptions import *
 from models import Team, Player, db
+from .exceptions import *
 
 
 def create_team(name, user_id, game_id):

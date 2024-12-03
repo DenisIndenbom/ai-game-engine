@@ -1,9 +1,9 @@
 from flask import Flask
-from models import db
-from flask_migrate import Migrate
 from flask_cors import CORS
+from flask_migrate import Migrate
 
 from config import *
+from models import db
 
 app = Flask(__name__)
 db_string = "postgresql://{}:{}@{}:{}/{}".format(DB_LOGIN, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE)
