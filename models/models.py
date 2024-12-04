@@ -18,7 +18,6 @@ class Game(db.Model):
     team_roles = db.Column(db.JSON, nullable=True)
 
     teams = db.relationship('Team', backref=backref('game', uselist=False), lazy=True)
-    lobby = db.relationship('Lobby', backref=backref('game', uselist=False), lazy=True)
     sessions = db.relationship('Session', backref=backref('game', uselist=False), lazy=True)
 
 
@@ -62,10 +61,3 @@ class Session(db.Model):
     winner = db.relationship('User', backref=backref('winned_sessions', uselist=False), lazy=True,
                              foreign_keys=[winner_id])
     teams = db.relationship('Team', secondary=team_session, backref='sessions')
-
-
-class Lobby(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    owner_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete="CASCADE"))
-    game_id = db.Column(db.Integer, db.ForeignKey('game.id', ondelete="CASCADE"))
-    description = db.Column(db.JSON, nullable=True)

@@ -99,7 +99,17 @@ def game():
         start = time.time()
 
         current_player = players[step % 2]
-        x, y = sdk.timeout_run(0.4, current_player.script, "make_choice", (deepcopy(field), current_player.role))
+        try:
+            x, y = sdk.timeout_run(0.4, current_player.script, "make_choice", (deepcopy(field), current_player.role))
+        except Exception as e:
+            if current_player != engine.teams[0].players[0]:
+                engine.set_winner(engine.teams[0])
+            else:
+                engine.set_winner(engine.teams[1])
+
+            print('Failed to run player script :(')
+
+            break
 
         if x < 0 or x > 4 or y < 0 or y > 4:
             continue
