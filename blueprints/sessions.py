@@ -14,7 +14,7 @@ sessions_blueprint = Blueprint('sessions', __name__)
 @sessions_blueprint.route('/')
 @requires_auth
 def my(user):
-    return render_template('sessions/index.html', title="Мои игровые сессии", sessions=grab_sessions(user), user=user)
+    return render_template('sessions/index.html', title='Мои игровые сессии', sessions=grab_sessions(user), user=user)
 
 
 @sessions_blueprint.route('/active')
@@ -42,7 +42,7 @@ def create(user):
     try:
         selected_game = get_game_by_id(game_id)
     except NotFound:
-        return render_template('sessions/create.html', games=games, error="Выберите игру")
+        return render_template('sessions/create.html', games=games, error='Выберите игру')
 
     teams_ids = request.form.getlist('teams')
     if not teams_ids:
@@ -56,7 +56,7 @@ def create(user):
         return redirect(f'/games/{game_session.id}')
     except Exception as e:
         print(e)
-        return render_template('sessions/create.html', game=selected_game, error="Ошибка запуска")
+        return render_template('sessions/create.html', game=selected_game, error='Ошибка запуска')
 
 
 @sessions_blueprint.route('/<int:session_id>/restart')

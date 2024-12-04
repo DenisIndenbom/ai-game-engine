@@ -20,7 +20,7 @@
                         {% if game_session.state != 'ended' %}
                             <span class="text-muted me-1">Идет</span>
                         {% else %}
-                            {% if not game_session.winner_id %}
+                            {% if not game_session.winner_id or not user %}
                                 <span class="text-primary me-1">Завершена</span>
                             {% else %}
                                 {% if user and game_session.winner_id == user.id %}
